@@ -225,12 +225,15 @@ class TestHondaNidecSafety(TestHondaSafetyBase, common.InterceptorSafetyTest):
   # Honda gas gains are the different
   def _interceptor_msg(self, gas, addr):
     to_send = make_msg(0, addr, 6)
-    gas2 = gas * 2
+    gas, gas2 = self._calc_gas_values(gas)
     to_send[0].data[0] = (gas & 0xFF00) >> 8
     to_send[0].data[1] = gas & 0xFF
     to_send[0].data[2] = (gas2 & 0xFF00) >> 8
     to_send[0].data[3] = gas2 & 0xFF
     return to_send
+
+  def _calc_gas_values(self, gas):
+    return gas, gas * 2
 
   def _send_brake_msg(self, brake):
     values = {"COMPUTER_BRAKE": brake}
@@ -285,6 +288,9 @@ class TestHondaNidecSafety(TestHondaSafetyBase, common.InterceptorSafetyTest):
       self._tx(self._interceptor_msg(0, 0x200))
       self.safety.set_gas_interceptor_detected(False)
 
+class TestHondaNidecSwappedGasSafety(TestHondaNidecSafety):
+  def _calc_gas_values(self, gas):
+    return gas * 2, gas
 
 class TestHondaNidecAltSafety(TestHondaNidecSafety, common.InterceptorSafetyTest):
   def setUp(self):
