@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import unittest
 from typing import Optional
 import numpy as np
